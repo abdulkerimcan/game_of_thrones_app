@@ -12,6 +12,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<CharacterModel>?> _charactersFuture;
+  List<String> icons = ["all", "stark", "targaryen", "lannister", "baratheon"];
+  Color _selectedColor = Colors.white;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -31,23 +34,52 @@ class _HomePageState extends State<HomePage> {
           _buildBanner(context),
           SizedBox(
             height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.black),
-                      child: Image.asset(
-                        "assets/houses/stark.png",
-                        color: Colors.white,
-                      )),
-                );
-              },
+            child: Center(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          if (index == 1) {
+                            _charactersFuture = CharacterApi.getHouseStark();
+                            _selectedColor = Colors.blue;
+                          } else if (index == 2) {
+                            _charactersFuture =
+                                CharacterApi.getHouseTargaryen();
+                            _selectedColor = Colors.red;
+
+                          } else if (index == 3) {
+                            _charactersFuture =
+                                CharacterApi.getHouseLannister();
+                            _selectedColor = Colors.amber;
+
+                          } else if (index == 4) {
+                            _charactersFuture =
+                                CharacterApi.getHouseBaratheon();
+                            _selectedColor = Colors.yellow;
+
+                          } else {
+                            _charactersFuture = CharacterApi.getCharacters();
+                            _selectedColor = Colors.white;
+                          }
+
+                          _selectedIndex = index;
+
+                        });
+                      },
+                      child: SizedBox(
+                        width: 60.0,
+                        height: 40.0,
+                        child: Image.asset("assets/houses/${icons[index]}.png",color: _selectedIndex == index ? _selectedColor : Colors.grey,),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           Expanded(
@@ -81,13 +113,13 @@ class _HomePageState extends State<HomePage> {
 
   Container _buildBanner(BuildContext context) {
     return Container(
-          height: MediaQuery.of(context).size.height / 5,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-            image: DecorationImage(
-                image: AssetImage("assets/throne.jpg"), fit: BoxFit.cover),
-          ),
-        );
+      height: MediaQuery.of(context).size.height / 5,
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        image: DecorationImage(
+            image: AssetImage("assets/throne.jpg"), fit: BoxFit.cover),
+      ),
+    );
   }
 }
